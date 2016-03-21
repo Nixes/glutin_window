@@ -163,7 +163,7 @@ impl GlutinWindow {
                 if cfg!(windows) {
                     let pixels_per_line: f64 = 10.0; // this value should be retreived from some context
                     x = x * pixels_per_line;
-                    y = x * pixels_per_line;
+                    y = y * pixels_per_line;
                 }
                 Some(Input::Move(Motion::MouseScroll(x, y)))
             },
