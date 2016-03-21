@@ -47,7 +47,8 @@ fn builder_from_settings(settings: &WindowSettings) -> glutin::WindowBuilder {
     let mut builder = glutin::WindowBuilder::new()
         .with_dimensions(size.width, size.height)
         .with_gl(GlRequest::Specific(Api::OpenGl, (major as u8, minor as u8)))
-        .with_title(settings.get_title());
+        .with_title(settings.get_title())
+        .with_srgb(Some(settings.get_srgb()));
     let samples = settings.get_samples();
     if settings.get_fullscreen() {
         builder = builder.with_fullscreen(glutin::get_primary_monitor());
@@ -92,7 +93,7 @@ impl GlutinWindow {
             )); }
 
         // Load the OpenGL function pointers.
-        gl::load_with(|s| window.get_proc_address(s));
+        gl::load_with(|s| window.get_proc_address(s) as *const _);
 
         Ok(GlutinWindow {
             window: window,
@@ -222,7 +223,7 @@ impl AdvancedWindow for GlutinWindow {
 
 impl OpenGLWindow for GlutinWindow {
     fn get_proc_address(&mut self, proc_name: &str) -> ProcAddress {
-        self.window.get_proc_address(proc_name)
+        self.window.get_proc_address(proc_name) as *const _
     }
 
     fn is_current(&self) -> bool {
