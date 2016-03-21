@@ -157,8 +157,17 @@ impl GlutinWindow {
             }
             Some(E::MouseWheel(MouseScrollDelta::PixelDelta(x, y))) =>
                 Some(Input::Move(Motion::MouseScroll(x as f64, y as f64))),
-            Some(E::MouseWheel(MouseScrollDelta::LineDelta(x, y))) =>
-                Some(Input::Move(Motion::MouseScroll(x as f64, y as f64))),
+            Some(E::MouseWheel(MouseScrollDelta::LineDelta(x, y))) => {
+                let mut x = x as f64;
+                let mut y = y as f64;
+                if cfg!(windows) {
+                    let pixels_per_line: f64 = 10.0; // this value should be retreived from some context
+                    x = x * pixels_per_line;
+                    y = x * pixels_per_line;
+                }
+                Some(Input::Move(Motion::MouseScroll(x, y)))
+            },
+
             Some(E::MouseInput(glutin::ElementState::Pressed, button)) =>
                 Some(Input::Press(Button::Mouse(map_mouse(button)))),
             Some(E::MouseInput(glutin::ElementState::Released, button)) =>
